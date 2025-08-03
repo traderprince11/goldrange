@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GOLD RANG PRO | Premium Calculation Tool</title>
+    <style>
+        :root {
+            --gold-primary: #d4af37;
+            --gold-secondary: #f5d020;
+            --gold-dark: #996515;
+            --premium-black: #1a1a1a;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--premium-black);
+            color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar {
+            background: linear-gradient(90deg, var(--premium-black) 0%, #2a2a2a 100%);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gold-primary);
+        }
+        .logo svg {
+            margin-right: 10px;
+            fill: var(--gold-primary);
+            width: 30px;
+            height: 30px;
+        }
+        .auth-buttons .btn {
+            margin-left: 15px;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-login {
+            background: transparent;
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-primary);
+        }
+        .btn-signup {
+            background: var(--gold-primary);
+            border: 1px solid var(--gold-primary);
+            color: var(--premium-black);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            flex: 1;
+        }
+        .calculator-container {
+            background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .calculator-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold-primary), var(--gold-dark));
+        }
+        .calculator-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .calculator-header h1 {
+            color: var(--gold-primary);
+            font-size: 36px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .calculator-header h1 svg {
+            margin-right: 15px;
+            width: 40px;
+            height: 40px;
+            fill: var(--gold-primary);
+        }
+        .calculator-header p {
+            color: #aaa;
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .subscription-plans {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        .plan-card {
+            background: #252525;
+            border-radius: 10px;
+            padding: 25px;
+            width: 280px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s;
+        }
+        .plan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            border-color: var(--gold-primary);
+        }
+        .plan-name {
+            color: var(--gold-primary);
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .plan-price {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        .plan-features li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        .plan-features li svg {
+            margin-right: 8px;
+            fill: var(--gold-primary);
+            width: 16px;
+            height: 16px;
+        }
+        .btn-subscribe {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-primary) 100%);
+            border: none;
+            border-radius: 6px;
+            color: var(--premium-black);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-subscribe:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+        .whatsapp-icon {
+            margin-right: 8px;
+            width: 20px;
+            height: 20px;
+        }
+        .protected-content {
+            display: none;
+        }
+        .logged-in .protected-content {
+            display: block;
+        }
+        .logged-in .auth-required {
+            display: none;
+        }
+        .calculator-body {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        .calculator-form {
+            flex: 1;
+            min-width: 300px;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--gold-primary);
+            font-weight: 600;
+        }
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            background: #333;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+        .btn-calculate {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-primary) 100%);
+            border: none;
+            border-radius: 8px;
+            color: var(--premium-black);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-calculate svg {
+            margin-right: 10px;
+            width: 24px;
+            height: 24px;
+            fill: var(--premium-black);
+        }
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+        .result-container {
+            flex: 1;
+            min-width: 300px;
+            background: #252525;
+            border-radius: 10px;
+            padding: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .result-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            color: var(--gold-primary);
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .result-header svg {
+            margin-right: 10px;
+            width: 24px;
+            height: 24px;
+            fill: var(--gold-primary);
+        }
+        .result-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--gold-primary);
+            text-align: center;
+            margin: 30px 0;
+        }
+        .access-info {
+            color: var(--gold-primary);
+            text-align: center;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: #252525;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            border: 1px solid var(--gold-primary);
+            position: relative;
+        }
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .close-modal:hover {
+            color: white;
+        }
+        .auth-form h2 {
+            color: var(--gold-primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .auth-form .form-group {
+            margin-bottom: 20px;
+        }
+        .auth-form .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-primary) 100%);
+            border: none;
+            border-radius: 8px;
+            color: var(--premium-black);
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .auth-form .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #aaa;
+        }
+        .auth-form .form-footer a {
+            color: var(--gold-primary);
+            text-decoration: none;
+        }
+        .footer {
+            background: #1a1a1a;
+            padding: 20px;
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            border-top: 1px solid rgba(212, 175, 55, 0.1);
+            margin-top: 60px;
+        }
+        .expired-message {
+            color: #ff6b6b;
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11V11.99z"/>
+            </svg>
+            GOLD RANG PRO
+        </div>
+        <div class="auth-buttons">
+            <button class="btn btn-login" id="loginBtn">Login</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="auth-required">
+            <div class="calculator-container">
+                <div class="calculator-header">
+                    <h1>Premium Gold Calculation</h1>
+                    <p>Subscribe to unlock professional gold calculation tools</p>
+                </div>
+                
+                <div class="subscription-plans">
+                    <div class="plan-card">
+                        <div class="plan-name">30 Days Access</div>
+                        <div class="plan-price">₹500</div>
+                        <ul class="plan-features">
+                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Unlimited calculations</li>
+                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> High precision results</li>
+                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Priority support</li>
+                        </ul>
+                        <button class="btn-subscribe" onclick="redirectToWhatsApp('30 Days')">
+                            <svg class="whatsapp-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#25D366">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                            </svg>
+                            Subscribe via WhatsApp
+                        </button>
+                    </div>
+                    
+                    <div class="plan-card">
+                        <div class="plan-name">60 Days Access</div>
+                        <div class="plan-price">₹900</div>
+                        <ul class="plan-features">
+                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Unlimited calculations</li>
+                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> High precision results</li>
+                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Priority support</li>
+                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 10% discount</li>
+                        </ul>
+                        <button class="btn-subscribe" onclick="redirectToWhatsApp('60 Days')">
+                            <svg class="whatsapp-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#25D366">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                            </svg>
+                            Subscribe via WhatsApp
+                        </button>
+                    </div>
+                    
+                    <div class="plan-card">
+                        <div class="plan-name">80 Days Access</div>
+                        <div class="plan-price">₹1200</div>
+                        <ul class="plan-features">
+                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Unlimited calculations</li>
+                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Highest precision</li>
+                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 24/7 priority support</li>
+                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Best value</li>
+                        </ul>
+                        <button class="btn-subscribe" onclick="redirectToWhatsApp('80 Days')">
+                            <svg class="whatsapp-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#25D366">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                            </svg>
+                            Subscribe via WhatsApp
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="access-info">
+                    After payment, you'll receive login credentials via WhatsApp
+                </div>
+            </div>
+        </div>
+        
+        <div class="protected-content">
+            <div class="calculator-container">
+                <div class="calculator-header">
+                    <h1>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11V11.99z"/>
+                        </svg>
+                        GOLD RANG CALCULATION
+                    </h1>
+                    <p>Professional tool for premium members</p>
+                    <div class="access-info" id="accessExpiry"></div>
+                    <div class="expired-message" id="expiredMessage"></div>
+                </div>
+                
+                <div class="calculator-body">
+                    <div class="calculator-form">
+                        <div class="form-group">
+                            <label for="goldValue">Enter Gold Value</label>
+                            <input type="number" id="goldValue" class="form-control" placeholder="Enter numerical value">
+                        </div>
+                        <button class="btn-calculate" onclick="calculateGold()">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            CALCULATE
+                        </button>
+                    </div>
+                    
+                    <div class="result-container">
+                        <div class="result-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/>
+                                <path d="M11 7h2v2h-2zM11 11h2v6h-2z"/>
+                            </svg>
+                            CALCULATION RESULT
+                        </div>
+                        <div class="result-value" id="finalGoldValue">0.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        &copy; <span id="currentYear"></span> Gold Rang Calculation Pro. All rights reserved.
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <div class="auth-form">
+                <h2>Login to Your Account</h2>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="Enter password received via WhatsApp">
+                </div>
+                <button class="btn-submit" onclick="login()">Login</button>
+                <div class="form-footer">
+                    Forgot password? Contact us on WhatsApp
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // WhatsApp Redirection
+        function redirectToWhatsApp(plan) {
+            const message = `I want to subscribe to Gold Rang Pro ${plan} plan (₹${getPlanPrice(plan)})`;
+            window.open(`https://wa.me/919341292721?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        function getPlanPrice(plan) {
+            switch(plan) {
+                case '30 Days': return '500';
+                case '60 Days': return '900';
+                case '80 Days': return '1200';
+                default: return '';
+            }
+        }
+
+        // Login function
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                alert("Please enter both email and password");
+                return;
+            }
+            
+            // Check if password is valid (format: plan-email-randomCode)
+            const passwordParts = password.split('-');
+            if (passwordParts.length !== 3) {
+                alert("Invalid password format. Please use the password received via WhatsApp.");
+                return;
+            }
+            
+            const plan = passwordParts[0];
+            const passwordEmail = passwordParts[1];
+            
+            // Basic validation - email in password should match entered email
+            if (passwordEmail !== email) {
+                alert("Email doesn't match the password. Please check your credentials.");
+                return;
+            }
+            
+            // Set expiration based on plan
+            let expiryDate = new Date();
+            switch(plan) {
+                case '30Days':
+                    expiryDate.setDate(expiryDate.getDate() + 30);
+                    break;
+                case '60Days':
+                    expiryDate.setDate(expiryDate.getDate() + 60);
+                    break;
+                case '80Days':
+                    expiryDate.setDate(expiryDate.getDate() + 80);
+                    break;
+                default:
+                    alert("Invalid subscription plan in password");
+                    return;
+            }
+            
+            // Save login details
+            const userData = {
+                email: email,
+                plan: plan,
+                expiry: expiryDate.getTime(),
+                password: password
+            };
+            
+            localStorage.setItem('goldRangUserData', JSON.stringify(userData));
+            checkLoginStatus();
+            document.getElementById('loginModal').style.display = 'none';
+        }
+        
+        function checkLoginStatus() {
+            const userData = JSON.parse(localStorage.getItem('goldRangUserData'));
+            
+            if (userData) {
+                const now = new Date().getTime();
+                
+                if (now < userData.expiry) {
+                    // Valid subscription
+                    document.body.classList.add('logged-in');
+                    
+                    // Show access info
+                    const expiryDate = new Date(userData.expiry);
+                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                    document.getElementById('accessExpiry').innerHTML = `
+                        Plan: <strong>${userData.plan}</strong> | 
+                        Expiry: <strong>${expiryDate.toLocaleDateString('en-IN', options)}</strong>
+                    `;
+                    document.getElementById('expiredMessage').textContent = '';
+                } else {
+                    // Subscription expired
+                    document.body.classList.remove('logged-in');
+                    document.getElementById('expiredMessage').textContent = 'Your subscription has expired. Please renew to continue using the service.';
+                    redirectToWhatsApp(userData.plan.replace('Days', ' Days'));
+                }
+            }
+        }
+
+        // Calculation function
+        function calculateGold() {
+            const userData = JSON.parse(localStorage.getItem('goldRangUserData'));
+            if (!userData) {
+                alert("Please login first");
+                return;
+            }
+            
+            const now = new Date().getTime();
+            if (now > userData.expiry) {
+                alert("Your subscription has expired. Please renew to continue using the service.");
+                redirectToWhatsApp(userData.plan.replace('Days', ' Days'));
+                return;
+            }
+            
+            const x = parseFloat(document.getElementById('goldValue').value);
+            
+            if (isNaN(x)) {
+                alert("Please enter a valid number");
+                return;
+            }
+            
+            if (x < 0) {
+                alert("Negative values not allowed");
+                return;
+            }
+            
+            // Perform calculation: (√x - 0.105)²
+            const sqrtX = Math.sqrt(x);
+            const subtracted = sqrtX - 0.105;
+            const finalResult = subtracted * subtracted;
+            
+            document.getElementById('finalGoldValue').textContent = finalResult.toFixed(6);
+        }
+
+        // Modal handling
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            document.getElementById('loginModal').style.display = 'flex';
+        });
+        
+        document.querySelector('.close-modal').addEventListener('click', function() {
+            document.getElementById('loginModal').style.display = 'none';
+        });
+        
+        window.addEventListener('click', function(event) {
+            if (event.target === document.getElementById('loginModal')) {
+                document.getElementById('loginModal').style.display = 'none';
+            }
+        });
+
+        // Initialize
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        checkLoginStatus();
+        
+        // Check login status every hour
+        setInterval(checkLoginStatus, 3600000);
+    </script>
+</body>
+</html>
